@@ -1,4 +1,5 @@
 import OpenGL.GL as gl
+from object_load import ModelLoader
 from PyQt5.QtWidgets import QOpenGLWidget
 from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt, QTimer
 from PyQt5.QtGui import QColor
@@ -56,11 +57,13 @@ class GLWidget(QOpenGLWidget):
 
         self.precision = 1e-2
 
+        self.model = ModelLoader("models//sphere//point.obj")
+
         self.lastPos = QPoint()
 
         self.colorRed = QColor.fromRgbF(1.0, 0.0, 0.0, 0.0)
         self.colorBlue = QColor.fromRgbF(0.0, 0.0, 1.0, 0.0)
-        self.colorGreen = QColor.fromRgbF(0.0, 1.0, 0.0, 0.0)
+        self.colorGreen2 = QColor.fromRgbF(0.0, 1.0, 0.0, 0.0)
         self.colorGreen = QColor.fromCmykF(0.40, 0.0, 1.0, 0.0)
         self.colorPurple = QColor.fromCmykF(0.39, 0.39, 0.0, 0.0)
         self.colorGray = QColor.fromCmykF(0.5, 0.5, 0.5, 0.5)
@@ -240,14 +243,6 @@ class GLWidget(QOpenGLWidget):
             self.z = z
             self.positionChanged.emit(x, y, z)
         else:
-            # x = math.sin(rot[0] * math.pi / 180.0) * (0.3 * math.sin(
-            #     (rot[2] + rot[1]) * math.pi / 180.0) + 0.25 * math.sin(
-            #     rot[1] * math.pi / 180.0))
-            # y = math.cos(rot[1] * math.pi / 180.0) * (0.3 * math.sin(
-            #     (rot[2] + rot[1]) * math.pi / 180.0) + 0.25 * math.sin(
-            #     rot[1] * math.pi / 180.0))
-            # z = 0.25 + 0.3 * math.cos((rot[2] + rot[1]) * math.pi / 180.0) + 0.25 * math.cos(
-            #     rot[1] * math.pi / 180.0)
             x = math.sin(rot[0]*math.pi/180.0)*(self.tl * math.sin((rot[2]+rot[1])*math.pi/180.0) +
                                                              (self.sl - self.free_dist) * math.sin(rot[1]*math.pi/180.0))
             y = math.cos(rot[0]*math.pi/180.0)*(self.tl * math.sin((rot[2]+rot[1])*math.pi/180.0) +
@@ -330,6 +325,9 @@ class GLWidget(QOpenGLWidget):
         gl.glTranslated(-self.width, self.sl - self.free_dist, 0.0)
         gl.glRotated(self.curThirdRotate, 1.0, 0.0, 0.0)
         gl.glCallList(self.makeArm(-(self.width/2), self.width/2, 0, self.tl, -(self.width/2), self.width/2))
+        gl.glPushMatrix()
+        self.model.paint()
+        gl.glPopMatrix()
         gl.glPopMatrix()
         gl.glPopMatrix()
         gl.glPopMatrix()
@@ -407,7 +405,7 @@ class GLWidget(QOpenGLWidget):
         genList = gl.glGenLists(1)
         gl.glNewList(genList, gl.GL_COMPILE)
         gl.glBegin(gl.GL_LINES)
-        self.setColor(self.colorGreen)
+        self.setColor(self.colorGreen2)
         gl.glVertex3d(0, 0, -10)
         gl.glVertex3d(0, 0, 10)
         gl.glEnd()
