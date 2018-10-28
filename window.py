@@ -21,11 +21,20 @@ class MainWindow(QMainWindow):
     def setup_menubar(self):
         mainMenu = self.menuBar()
         fileMenu = mainMenu.addMenu('File')
+        optionMenu = mainMenu.addMenu('Options')
         exitButton = QAction('Exit', self)
         exitButton.setShortcut('Ctrl+Q')
         exitButton.setStatusTip('Exit application')
         exitButton.triggered.connect(self.close)
         fileMenu.addAction(exitButton)
+        cameraButton = QAction('Restore default camera', self)
+        cameraButton.setShortcut('Ctrl+R')
+        cameraButton.setStatusTip('Restore camera to default position')
+        cameraButton.triggered.connect(self.restore_camera)
+        optionMenu.addAction(cameraButton)
+
+    def restore_camera(self):
+        self.ui.glwidget.setDefaultCamera()
 
 
 class KsaGui(QWidget):

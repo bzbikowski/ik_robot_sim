@@ -6,7 +6,6 @@ from PyQt5.QtGui import QColor
 import numpy as np
 import math
 import scipy.optimize
-import time
 
 
 class GLWidget(QOpenGLWidget):
@@ -42,10 +41,12 @@ class GLWidget(QOpenGLWidget):
         self.yTarget = 0
         self.zTarget = 0.9
 
-        self.xRot = 0
-        self.yRot = 0
-        self.zRot = 0
+        self.xRot = 60*16
+        self.yRot = 0*16
+        self.zRot = 0*16
         self.cameraDepth = 0.7
+        self.cameraTransX = 0.0
+        self.cameraTransY = 0.2
 
         self.curFirstRotate = 0.0
         self.curSecondRotate = 0.0
@@ -77,7 +78,8 @@ class GLWidget(QOpenGLWidget):
         return QSize(400, 400)
 
     def setArmRotation(self, f, s, t):
-        _, _, z = self.calculate_fk([f, s, t])
+        fp, sp, tp = map(lambda x: x/180*math.pi, [f, s, t])
+        _, _, z = self.calculate_fk([fp, sp, tp])
         if z < 0:
             self.errorDetected.emit("Nie dopuszczalna pozycja ramienia robota. ")
             return
@@ -154,6 +156,7 @@ class GLWidget(QOpenGLWidget):
                 print(result.status, result.message)
                 self.mode = -1
                 return
+            result = list(map(lambda x: x * 180 / math.pi, result))
             self.targetFirstRotate = self.normalizeJointAngle(result[0])
             self.targetSecondRotate = self.normalizeJointAngle(result[1])
             self.targetThirdRotate = self.normalizeJointAngle(result[2])
@@ -243,12 +246,9 @@ class GLWidget(QOpenGLWidget):
             self.z = z
             self.positionChanged.emit(x, y, z)
         else:
-            x = math.sin(rot[0]*math.pi/180.0)*(self.tl * math.sin((rot[2]+rot[1])*math.pi/180.0) +
-                                                             (self.sl - self.free_dist) * math.sin(rot[1]*math.pi/180.0))
-            y = math.cos(rot[0]*math.pi/180.0)*(self.tl * math.sin((rot[2]+rot[1])*math.pi/180.0) +
-                                                             (self.sl - self.free_dist) * math.sin(rot[1]*math.pi/180.0))
-            z = (self.fl - self.free_dist) + self.tl * math.cos((rot[2]+rot[1])*math.pi/180.0) + \
-                (self.sl - self.free_dist) * math.cos(rot[1]*math.pi/180.0)
+            x = math.sin(rot[0])*(self.tl * math.sin(rot[2]+rot[1]) + (self.sl - self.free_dist) * math.sin(rot[1]))
+            y = math.cos(rot[0])*(self.tl * math.sin(rot[2]+rot[1]) + (self.sl - self.free_dist) * math.sin(rot[1]))
+            z = (self.fl - self.free_dist) + self.tl * math.cos(rot[2]+rot[1]) + (self.sl - self.free_dist) * math.cos(rot[1])
             return [x, y, z]
 
     def calculate_ik(self):
@@ -306,7 +306,7 @@ class GLWidget(QOpenGLWidget):
         gl.glLoadIdentity()
         gl.glTranslated(0.0, 0.0, -10.0)
         gl.glScaled(self.cameraDepth, self.cameraDepth, self.cameraDepth)
-        gl.glRotated(60, 1.0, 0.0, 0.0)
+        gl.glTranslated(self.cameraTransX, self.cameraTransY, 0)
         gl.glPushMatrix()
         gl.glRotated(self.xRot / 16.0, 1.0, 0.0, 0.0)
         gl.glRotated(self.yRot / 16.0, 0.0, 1.0, 0.0)
@@ -360,6 +360,8 @@ class GLWidget(QOpenGLWidget):
         elif event.buttons() & Qt.RightButton:
             self.setXRotation(self.xRot + 8 * dy)
             self.setZRotation(self.zRot + 8 * dx)
+        elif event.buttons() & Qt.MiddleButton:
+            self.setTranslation(dx / 100.0, dy / 100.0)
 
         self.lastPos = event.pos()
 
@@ -519,3 +521,15 @@ class GLWidget(QOpenGLWidget):
 
     def setColor(self, c):
         gl.glColor4f(c.redF(), c.greenF(), c.blueF(), c.alphaF())
+
+    def setTranslation(self, alpha, beta):
+        self.cameraTransX += alpha * self.cameraDepth
+        self.cameraTransY += beta * self.cameraDepth
+
+    def setDefaultCamera(self):
+        self.xRot = 60*16
+        self.yRot = 0*16
+        self.zRot = 0*16
+        self.cameraDepth = 0.7
+        self.cameraTransX = 0.0
+        self.cameraTransY = 0.2
