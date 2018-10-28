@@ -31,7 +31,7 @@ def make_array(ph, d, a, alp):
 
 def return_final(ph1, ph2, ph3):
     A0 = make_array(math.pi / 2, 0, 0, 0)
-    A1 = make_array(-ph1, 0.25, 0, -math.pi / 2)
+    A1 = make_array(-ph1, 0.35, 0, -math.pi / 2)
     A2 = make_array(ph2, 0.1, 0, math.pi / 2)
     A3 = make_array(0, 0.25, 0, math.pi / 2)
     A4 = make_array(-ph3, 0.1, 0, -math.pi / 2)
