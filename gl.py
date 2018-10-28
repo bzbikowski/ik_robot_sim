@@ -296,7 +296,7 @@ class GLWidget(QOpenGLWidget):
 
     def initializeGL(self):
         self.setClearColor(self.colorPurple.darker())
-        gl.glShadeModel(gl.GL_FLAT)
+        gl.glShadeModel(gl.GL_SMOOTH)
         gl.glEnable(gl.GL_DEPTH_TEST)
         gl.glEnable(gl.GL_CULL_FACE)
 
@@ -326,7 +326,8 @@ class GLWidget(QOpenGLWidget):
         gl.glRotated(self.curThirdRotate, 1.0, 0.0, 0.0)
         gl.glCallList(self.makeArm(-(self.width/2), self.width/2, 0, self.tl, -(self.width/2), self.width/2))
         gl.glPushMatrix()
-        self.model.paint()
+        gl.glTranslated(0, self.tl+0.0175, 0)
+        gl.glCallList(self.model.paint())
         gl.glPopMatrix()
         gl.glPopMatrix()
         gl.glPopMatrix()
