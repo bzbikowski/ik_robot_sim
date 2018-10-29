@@ -81,7 +81,7 @@ class GLWidget(QOpenGLWidget):
         fp, sp, tp = map(lambda x: x/180*math.pi, [f, s, t])
         _, _, z = self.calculate_fk([fp, sp, tp])
         if z < 0:
-            self.errorDetected.emit("Nie dopuszczalna pozycja ramienia robota. ")
+            self.errorDetected.emit("Unacceptable position of the robot arm. ")
             return
         self.mode = 0
         self.targetFirstRotate = f
@@ -90,7 +90,7 @@ class GLWidget(QOpenGLWidget):
 
     def setPosition(self, x, y, z):
         if z < 0:
-            self.errorDetected.emit("Nie dopuszczalna pozycja ramienia robota. ")
+            self.errorDetected.emit("Unacceptable position of the robot arm. ")
             return
         self.mode = 1
         self.xTarget = x
@@ -149,7 +149,7 @@ class GLWidget(QOpenGLWidget):
                 if result.fun <= self.precision:
                     result = result.x
                 else:
-                    self.errorDetected.emit("Podany punkt nie jest osiagalny przez robota. ")
+                    self.errorDetected.emit("This point is not attainable by the robot.. ")
                     self.mode = -1
                     return
             else:

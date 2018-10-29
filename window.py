@@ -16,7 +16,7 @@ class MainWindow(QMainWindow):
         self.ui = KsaGui()
         self.setCentralWidget(self.ui)
 
-        self.setWindowTitle("Komputerowe systemy automatyki - projekt")
+        self.setWindowTitle("Komputerowe systemy automatyki - project")
 
     def setup_menubar(self):
         mainMenu = self.menuBar()

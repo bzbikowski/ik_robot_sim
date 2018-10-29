@@ -1,4 +1,4 @@
-# Na podstawie: http://www.pygame.org/wiki/OBJFileLoader
+# Based on: http://www.pygame.org/wiki/OBJFileLoader
 import OpenGL.GL as gl
 import os
 
