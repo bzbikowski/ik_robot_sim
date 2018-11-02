@@ -1,5 +1,5 @@
 import OpenGL.GL as gl
-from object_load import ModelLoader
+from src.object_load import ModelLoader
 from PyQt5.QtWidgets import QOpenGLWidget
 from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt, QTimer
 from PyQt5.QtGui import QColor
@@ -32,32 +32,32 @@ class GLWidget(QOpenGLWidget):
         self.free_dist = 0.05
         # 0 - rotation, 1 - position
         self.mode = 0
-
+        # start position of the handle
         self.x = 0
         self.y = 0
         self.z = 0.9
-
+        # target position of the handle
         self.xTarget = 0
         self.yTarget = 0
         self.zTarget = 0.9
-
+        # camera settings
         self.xRot = 60*16
         self.yRot = 0*16
         self.zRot = 0*16
         self.cameraDepth = 0.7
         self.cameraTransX = 0.0
         self.cameraTransY = 0.2
-
+        # start position of joints
         self.curFirstRotate = 0.0
         self.curSecondRotate = 0.0
         self.curThirdRotate = 0.0
-
+        # target position of joints
         self.targetFirstRotate = 0.0
         self.targetSecondRotate = 0.0
         self.targetThirdRotate = 0.0
-
-        self.precision = 1e-2
-
+        # result precesion for minimizing algorithm
+        self.precision = 1e-1
+        #
         self.model = ModelLoader("models//sphere//point.obj")
 
         self.lastPos = QPoint()
@@ -292,7 +292,8 @@ class GLWidget(QOpenGLWidget):
             fun=fun,
             x0=cur,
             method='Nelder-Mead',
-            options={})
+            options={'disp': True,
+                     'xatol': 1e-4})
 
     def initializeGL(self):
         self.setClearColor(self.colorPurple.darker())

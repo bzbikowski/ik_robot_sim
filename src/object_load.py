@@ -52,8 +52,8 @@ class ModelLoader(object):
                 self.faces.append((face, norms, texcoords, material))
 
     def paint(self):
-        self.gl_list = gl.glGenLists(1)
-        gl.glNewList(self.gl_list, gl.GL_COMPILE)
+        gl_list = gl.glGenLists(1)
+        gl.glNewList(gl_list, gl.GL_COMPILE)
         gl.glEnable(gl.GL_TEXTURE_2D)
         gl.glFrontFace(gl.GL_CCW)
         for face in self.faces:
@@ -67,13 +67,11 @@ class ModelLoader(object):
             for i in range(len(vertices)):
                 if normals[i] > 0:
                     gl.glNormal3fv(list(self.normals[normals[i] - 1]))
-                # if texture_coords[i] > 0:
-                #     gl.glTexCoord2fv(self.texcoords[texture_coords[i] - 1])
                 gl.glVertex3fv(list(self.vertices[vertices[i] - 1]))
             gl.glEnd()
         gl.glDisable(gl.GL_TEXTURE_2D)
         gl.glEndList()
-        return self.gl_list
+        return gl_list
 
     def parse_mtl(self, filename):
         mtl = {}

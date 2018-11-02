@@ -1,12 +1,9 @@
-import sys
-import math
-
-from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt, QRegExp
-from PyQt5.QtGui import QColor, QRegExpValidator
-from PyQt5.QtWidgets import QHBoxLayout, QOpenGLWidget, QSlider, QWidget, QMainWindow, QAction, QVBoxLayout, QPushButton,\
+from PyQt5.QtCore import QRegExp
+from PyQt5.QtGui import QRegExpValidator
+from PyQt5.QtWidgets import QHBoxLayout, QWidget, QMainWindow, QAction, QVBoxLayout, QPushButton,\
     QLineEdit, QLabel, QMessageBox
-from gl import GLWidget
-from settings import AngleValidator
+from src.gl import GLWidget
+from src.settings import AngleValidator
 
 
 class MainWindow(QMainWindow):
